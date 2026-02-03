@@ -1,0 +1,18 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "panels": [
+    {
+      "type": "graph",
+      "title": "Node Process CPU",
+      "targets": [
+        {
+          "expr": "process_cpu_seconds_total"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 36,
+  "title": "SOC Backend Metrics"
+}

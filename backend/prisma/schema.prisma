@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  admin
+  analyst
+  auditor
+  readonly
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  role      UserRole
+  tenantId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  audits    AuditEntry[]
+}
+
+model AuditEntry {
+  id        String   @id @default(uuid())
+  tenantId  String
+  actorId   String
+  actorEmail String
+  action    String
+  method    String
+  path      String
+  status    Int
+  ip        String
+  metadata  Json
+  createdAt DateTime @default(now())
+}
+
+model AlertRule {
+  id        String   @id @default(uuid())
+  tenantId  String
+  name      String
+  condition Json
+  severity  String
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SavedQuery {
+  id        String   @id @default(uuid())
+  tenantId  String
+  name      String
+  query     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

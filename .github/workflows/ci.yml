@@ -1,0 +1,42 @@
+name: CI
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install backend deps
+        working-directory: backend
+        run: npm install
+      - name: Build backend
+        working-directory: backend
+        run: npm run build
+      - name: Test backend
+        working-directory: backend
+        run: npm test
+      - name: Install frontend deps
+        working-directory: frontend
+        run: npm install
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+      - name: Docker build images
+        run: |
+          docker build -t your-dockerhub/soc-backend:latest ./backend
+          docker build -t your-dockerhub/soc-frontend:latest ./frontend
+      - name: Docker push
+        run: |
+          echo "TODO: docker login"
+          docker push your-dockerhub/soc-backend:latest
+          docker push your-dockerhub/soc-frontend:latest
+      - name: Deploy to k8s
+        run: |
+          echo "TODO: configure kubectl context"
+          kubectl apply -f k8s/
