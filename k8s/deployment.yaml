@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: soc-backend
+  namespace: soc-logging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: soc-backend
+  template:
+    metadata:
+      labels:
+        app: soc-backend
+    spec:
+      containers:
+        - name: backend
+          image: your-dockerhub/soc-backend:latest
+          ports:
+            - containerPort: 4000
+          envFrom:
+            - secretRef:
+                name: soc-secrets
+          env:
+            - name: JWT_ISSUER
+              value: "soc-platform"
+            - name: OPENSEARCH_INDEX
+              value: "soc-logs"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: soc-frontend
+  namespace: soc-logging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: soc-frontend
+  template:
+    metadata:
+      labels:
+        app: soc-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: your-dockerhub/soc-frontend:latest
+          ports:
+            - containerPort: 5173
+          env:
+            - name: VITE_API_URL
+              value: "https://soc.example.com"
